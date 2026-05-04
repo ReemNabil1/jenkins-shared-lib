@@ -8,10 +8,10 @@ def call(Map config) {
         }
 
         environment {
-            IMAGE_NAME     = config.imageName
-            IMAGE_TAG      = config.imageTag
-            CONTAINER_NAME = config.containerName
-            REPO_URL       = config.repoUrl
+            IMAGE_NAME     = "${config.imageName}"
+            IMAGE_TAG      = "${config.imageTag}"
+            CONTAINER_NAME = "${config.containerName}"
+            REPO_URL       = "${config.repoUrl}"
             PORT           = "${params.PORT}"
         }
 
