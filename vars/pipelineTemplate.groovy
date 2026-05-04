@@ -22,15 +22,15 @@ def call(Map config) {
                     sh 'mvn clean package -DskipTests'
                 }
             }
-            stage('Verify Jar') {
-                steps {
-                    sh 'ls -la target/'
-                }
-            }
 
             stage('Test') {
                 steps {
                     sh 'mvn clean test -Dtest=!PostgresIntegrationTests'
+                }
+            }
+            stage('Verify Jar') {
+                steps {
+                    sh 'ls -la target/'
                 }
             }
 
