@@ -28,7 +28,6 @@ def call(Map config) {
                     sh 'mvn clean package -DskipTests'
                     
                     sh 'ls -la target/'
-                    sh 'cp target/*.jar target/app.jar'
                 }
             }
 
@@ -40,7 +39,8 @@ def call(Map config) {
 
             stage('Verify Jar') {
                 steps {
-                    sh 'ls -la target/app.jar'
+                    sh 'test -f target/app.jar && echo "JAR exists"'
+                    sh 'ls -lh target/app.jar'
                 }
             }
 
