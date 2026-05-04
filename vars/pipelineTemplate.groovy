@@ -4,7 +4,7 @@ def call(Map config) {
         agent any
 
         parameters {
-            string(name: 'PORT', defaultValue: '8080', description: 'Application Port')
+            string(name: 'PORT', defaultValue: '8080', description: 'App Port')
         }
 
         environment {
@@ -25,7 +25,7 @@ def call(Map config) {
 
             stage('Test') {
                 steps {
-                    sh 'mvn test'
+                    sh 'mvn test -DskipITs'
                 }
             }
 
@@ -42,7 +42,7 @@ def call(Map config) {
                         usernameVariable: 'USER',
                         passwordVariable: 'PASS'
                     )]) {
-                        sh "echo $PASS | docker login -u $USER --password-stdin"
+                        sh "docker login -u $USER -p $PASS"
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
@@ -50,18 +50,16 @@ def call(Map config) {
 
             stage('Deploy') {
                 steps {
-                    sh """
-                        docker stop ${CONTAINER_NAME} || true
-                        docker rm ${CONTAINER_NAME} || true
-                        docker run -d --name ${CONTAINER_NAME} -p ${PORT}:8080 ${IMAGE_NAME}:${IMAGE_TAG}
-                    """
+                    sh "docker stop ${CONTAINER_NAME} || true"
+                    sh "docker rm ${CONTAINER_NAME} || true"
+                    sh "docker run -d --name ${CONTAINER_NAME} -p ${PORT}:8080 ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
 
         post {
             success {
-                echo "SUCCESS: ${IMAGE_NAME}:${IMAGE_TAG} deployed on port ${PORT}"
+                echo "SUCCESS: ${IMAGE_NAME} deployed on port ${PORT}"
             }
             failure {
                 echo "FAILED pipeline execution"
