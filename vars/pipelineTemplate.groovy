@@ -25,7 +25,7 @@ def call(Map config) {
 
             stage('Test') {
                 steps {
-                    sh 'mvn test -DskipITs'
+                    sh 'mvn clean test -Dtest=!PostgresIntegrationTests'
                 }
             }
 
