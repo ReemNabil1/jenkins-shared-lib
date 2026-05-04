@@ -25,7 +25,6 @@ def call(Map config) {
             stage('Build') {
                 steps {
                     sh 'mvn clean package -DskipTests'
-                    sh 'cp target/*.jar target/app.jar'
                 }
             }
 
