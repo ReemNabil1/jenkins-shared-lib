@@ -4,23 +4,22 @@ def call(Map config) {
         agent any
 
         parameters {
-            string(name: 'PORT', defaultValue: '8080')
+            string(name: 'PORT', defaultValue: '8080', description: 'Application Port')
         }
 
         environment {
-            IMAGE_NAME     = "${config.imageName}"
-            IMAGE_TAG      = "${config.imageTag}"
-            CONTAINER_NAME = "${config.containerName}"
-            REPO_URL       = "${config.repoUrl}"
+            IMAGE_NAME     = config.imageName
+            IMAGE_TAG      = config.imageTag
+            CONTAINER_NAME = config.containerName
+            REPO_URL       = config.repoUrl
             PORT           = "${params.PORT}"
         }
 
         stages {
 
-
             stage('Build') {
                 steps {
-                    sh 'mvn clean package'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
 
@@ -43,7 +42,7 @@ def call(Map config) {
                         usernameVariable: 'USER',
                         passwordVariable: 'PASS'
                     )]) {
-                        sh "docker login -u $USER -p $PASS"
+                        sh "echo $PASS | docker login -u $USER --password-stdin"
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
@@ -51,19 +50,21 @@ def call(Map config) {
 
             stage('Deploy') {
                 steps {
-                    sh "docker stop ${CONTAINER_NAME} || true"
-                    sh "docker rm ${CONTAINER_NAME} || true"
-                    sh "docker run -d --name ${CONTAINER_NAME} -p ${PORT}:8080 ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh """
+                        docker stop ${CONTAINER_NAME} || true
+                        docker rm ${CONTAINER_NAME} || true
+                        docker run -d --name ${CONTAINER_NAME} -p ${PORT}:8080 ${IMAGE_NAME}:${IMAGE_TAG}
+                    """
                 }
             }
         }
 
         post {
             success {
-                echo "SUCCESS: ${IMAGE_NAME} deployed on port ${PORT}"
+                echo "SUCCESS: ${IMAGE_NAME}:${IMAGE_TAG} deployed on port ${PORT}"
             }
             failure {
-                echo "FAILED"
+                echo "FAILED pipeline execution"
             }
         }
     }
