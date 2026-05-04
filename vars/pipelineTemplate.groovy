@@ -4,7 +4,7 @@ def call(Map config) {
         agent any
 
         parameters {
-            string(name: 'PORT', defaultValue: '8080', description: 'App Port')
+            string(name: 'PORT', defaultValue: '8081', description: 'App Port')
         }
 
         environment {
