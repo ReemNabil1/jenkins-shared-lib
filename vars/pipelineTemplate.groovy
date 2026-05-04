@@ -16,7 +16,12 @@ def call(Map config) {
         }
 
         stages {
-
+           
+            stage('Clean Workspace') {
+                steps {
+                    sh 'rm -rf target/'
+                }
+            }
             stage('Build') {
                 steps {
                     sh 'mvn clean package -DskipTests'
