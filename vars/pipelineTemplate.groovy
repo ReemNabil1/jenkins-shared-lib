@@ -16,26 +16,31 @@ def call(Map config) {
         }
 
         stages {
-           
+
             stage('Clean Workspace') {
                 steps {
                     sh 'rm -rf target/'
                 }
             }
+
             stage('Build') {
                 steps {
                     sh 'mvn clean package -DskipTests'
+                    
+                    sh 'ls -la target/'
+                    sh 'cp target/*.jar target/app.jar'
                 }
             }
 
             stage('Test') {
                 steps {
-                    sh 'mvn clean test -Dtest=!PostgresIntegrationTests'
+                    sh 'mvn test -Dtest=!PostgresIntegrationTests'
                 }
             }
+
             stage('Verify Jar') {
                 steps {
-                    sh 'ls -la target/'
+                    sh 'ls -la target/app.jar'
                 }
             }
 
