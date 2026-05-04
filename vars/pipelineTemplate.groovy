@@ -19,12 +19,6 @@ def call(Map config) {
                 }
             }
 
-            stage('Clone Repo') {
-                steps {
-                    git "${REPO_URL}"
-                }
-            }
-
             stage('Build') {
                 steps {
                     sh 'mvn clean package -DskipTests'
