@@ -17,11 +17,6 @@ def call(Map config) {
 
         stages {
 
-            stage('Clone') {
-                steps {
-                    git config.repoUrl
-                }
-            }
 
             stage('Build') {
                 steps {
